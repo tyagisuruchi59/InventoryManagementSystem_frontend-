@@ -9,17 +9,14 @@ const createAPI = (baseURL) => {
     if (token) config.headers.Authorization = `Bearer ${token}`;
     return config;
   });
-  instance.interceptors.response.use(
-    (res) => res,
-    (err) => {
-      if (err.response?.status === 401) {
-        localStorage.clear();
-        window.location.href = '/login';
-      }
-      return Promise.reject(err);
-    }
-  );
   return instance;
 };
 
-export const authAPI = createAPI('http://localhost:5000');
+export const authAPI      = createAPI('http://localhost:5000');
+export const productAPI   = createAPI('http://localhost:5001');
+export const warehouseAPI = createAPI('http://localhost:5002');
+export const purchaseAPI  = createAPI('http://localhost:5003');
+export const supplierAPI  = createAPI('http://localhost:5004');
+export const movementAPI  = createAPI('http://localhost:5005');
+export const alertAPI     = createAPI('http://localhost:5007');
+export const reportAPI    = createAPI('http://localhost:5008');

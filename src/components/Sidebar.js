@@ -8,6 +8,8 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 const navItems = [
   { path: '/uc1/users',    label: 'Users',          icon: '👥', desc: 'View & manage users' },
   { path: '/uc1/register', label: 'Register User',  icon: '➕', desc: 'Add new user'        },
+  { path: '/uc2/products', label: 'Products', icon: '📦', uc: 'UC2' },
+{ path: '/uc2/add-product', label: 'Add Product', icon: '➕', uc: 'UC2' },
 ];
 
 function Sidebar() {
