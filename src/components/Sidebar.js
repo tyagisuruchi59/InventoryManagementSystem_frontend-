@@ -10,6 +10,9 @@ const navItems = [
   { path: '/uc1/register', label: 'Register User',  icon: '➕', desc: 'Add new user'        },
   { path: '/uc2/products', label: 'Products', icon: '📦', uc: 'UC2' },
 { path: '/uc2/add-product', label: 'Add Product', icon: '➕', uc: 'UC2' },
+{ path: '/uc3/warehouses', label: 'Warehouses',  icon: '🏭', desc: 'Manage warehouses' },
+{ path: '/uc3/stock',      label: 'Stock Levels', icon: '📦', desc: 'View stock levels' },
+{ path: '/uc3/transfer',   label: 'Transfer',     icon: '⇄',  desc: 'Transfer stock'   },
 ];
 
 function Sidebar() {

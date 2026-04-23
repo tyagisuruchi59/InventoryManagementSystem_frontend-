@@ -10,6 +10,10 @@ import UsersPage from './pages/UC1_Auth/UsersPage';
 import ProductsPage from './pages/UC2_Product/ProductsPage';
 import AddProductPage from './pages/UC2_Product/AddProductPage';
 import ProductDetailPage from './pages/UC2_Product/ProductDetailPage';
+//uc3
+import WarehousesPage from './pages/UC3_Warehouse/WarehousesPage';
+import StockPage from './pages/UC3_Warehouse/StockPage';
+import TransferPage from './pages/UC3_Warehouse/TransferPage';
 
 import Sidebar from './components/Sidebar';
 import './index.css';
@@ -43,6 +47,11 @@ function App() {
         <Route path="/uc2/products" element={<PrivateRoute><Layout><ProductsPage /></Layout></PrivateRoute>} />
         <Route path="/uc2/add-product" element={<PrivateRoute><Layout><AddProductPage /></Layout></PrivateRoute>} />
         <Route path="/uc2/product/:id" element={<PrivateRoute><Layout><ProductDetailPage /></Layout></PrivateRoute>} />
+        
+
+      <Route path="/uc3/warehouses" element={<PrivateRoute><Layout><WarehousesPage /></Layout></PrivateRoute>} />
+<Route path="/uc3/stock"      element={<PrivateRoute><Layout><StockPage /></Layout></PrivateRoute>} />
+<Route path="/uc3/transfer"   element={<PrivateRoute><Layout><TransferPage /></Layout></PrivateRoute>} />
 
         {/* Default */}
         <Route path="/" element={<Navigate to="/login" replace />} />
