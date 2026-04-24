@@ -13,6 +13,8 @@ const navItems = [
 { path: '/uc3/warehouses', label: 'Warehouses',  icon: '🏭', desc: 'Manage warehouses' },
 { path: '/uc3/stock',      label: 'Stock Levels', icon: '📦', desc: 'View stock levels' },
 { path: '/uc3/transfer',   label: 'Transfer',     icon: '⇄',  desc: 'Transfer stock'   },
+{ path: '/uc4/purchase',  label: 'Purchase Orders', icon: '📋', desc: 'Manage PO lifecycle' },
+{ path: '/uc4/create-po', label: 'Create PO',       icon: '➕', desc: 'New purchase order'  },
 ];
 
 function Sidebar() {

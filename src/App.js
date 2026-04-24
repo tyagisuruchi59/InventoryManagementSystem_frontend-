@@ -17,6 +17,8 @@ import TransferPage from './pages/UC3_Warehouse/TransferPage';
 
 import Sidebar from './components/Sidebar';
 import './index.css';
+import PurchasePage   from './pages/UC4_Purchase/PurchasePage';
+import CreatePOPage   from './pages/UC4_Purchase/CreatePOPage';
 
 const PrivateRoute = ({ children }) => {
   const token = localStorage.getItem('stockpro_token');
@@ -52,6 +54,9 @@ function App() {
       <Route path="/uc3/warehouses" element={<PrivateRoute><Layout><WarehousesPage /></Layout></PrivateRoute>} />
 <Route path="/uc3/stock"      element={<PrivateRoute><Layout><StockPage /></Layout></PrivateRoute>} />
 <Route path="/uc3/transfer"   element={<PrivateRoute><Layout><TransferPage /></Layout></PrivateRoute>} />
+
+      <Route path="/uc4/purchase"   element={<PrivateRoute><Layout><PurchasePage /></Layout></PrivateRoute>} />
+<Route path="/uc4/create-po"  element={<PrivateRoute><Layout><CreatePOPage /></Layout></PrivateRoute>} />
 
         {/* Default */}
         <Route path="/" element={<Navigate to="/login" replace />} />

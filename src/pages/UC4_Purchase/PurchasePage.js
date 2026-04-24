@@ -18,27 +18,10 @@ function PurchasePage() {
   const loadOrders = async () => {
     setLoading(true);
     try {
-      // Check your PurchaseController route - try both
       const res = await purchaseAPI.get('/api/purchase-orders');
       setOrders(res.data);
-    } catch (err) {
-      try {
-        const res = await purchaseAPI.get('/api/purchase');
-        setOrders(res.data);
-      } catch (err2) { console.log(err2); }
-    }
+    } catch (err) { console.log(err); }
     setLoading(false);
-  };
-
-  const handleSubmit = async (id) => {
-    if (!window.confirm('Submit this PO for approval?')) return;
-    try {
-      await purchaseAPI.put(`/api/purchase-orders/${id}/submit`);
-      loadOrders();
-    } catch {
-      try { await purchaseAPI.put(`/api/purchase/${id}/submit`); loadOrders(); }
-      catch { alert('Error submitting PO'); }
-    }
   };
 
   const handleApprove = async (id) => {
@@ -46,41 +29,36 @@ function PurchasePage() {
     try {
       await purchaseAPI.put(`/api/purchase-orders/${id}/approve`);
       loadOrders();
-    } catch {
-      try { await purchaseAPI.put(`/api/purchase/${id}/approve`); loadOrders(); }
-      catch { alert('Error approving PO'); }
-    }
+    } catch { alert('Error approving PO'); }
   };
 
   const handleCancel = async (id) => {
     if (!window.confirm('Cancel this PO?')) return;
     try {
-      await purchaseAPI.put(`/api/purchase-orders/${id}/cancel`, { reason: 'Cancelled by user' });
+      await purchaseAPI.put(`/api/purchase-orders/${id}/cancel`);
       loadOrders();
-    } catch {
-      try { await purchaseAPI.put(`/api/purchase/${id}/cancel`, { reason: 'Cancelled' }); loadOrders(); }
-      catch { alert('Error cancelling PO'); }
-    }
+    } catch { alert('Error cancelling PO'); }
   };
 
   const statusColor = (status) => {
     const map = {
-      'DRAFT':     { bg: 'rgba(100,100,100,0.1)', color: '#999',    border: '#333' },
-      'PENDING':   { bg: 'rgba(255,171,0,0.1)',   color: '#ffab00', border: 'rgba(255,171,0,0.3)' },
-      'APPROVED':  { bg: 'rgba(74,222,128,0.1)',  color: '#4ade80', border: 'rgba(74,222,128,0.3)' },
-      'RECEIVED':  { bg: 'rgba(0,212,255,0.1)',   color: '#00d4ff', border: 'rgba(0,212,255,0.3)' },
-      'CANCELLED': { bg: 'rgba(220,53,69,0.1)',   color: '#dc3545', border: 'rgba(220,53,69,0.3)' },
+      'Draft':             { bg: 'rgba(100,100,100,0.1)', color: '#999',    border: '#333' },
+      'Pending':           { bg: 'rgba(255,171,0,0.1)',   color: '#ffab00', border: 'rgba(255,171,0,0.3)' },
+      'Approved':          { bg: 'rgba(74,222,128,0.1)',  color: '#4ade80', border: 'rgba(74,222,128,0.3)' },
+      'FullyReceived':     { bg: 'rgba(0,212,255,0.1)',   color: '#00d4ff', border: 'rgba(0,212,255,0.3)' },
+      'PartiallyReceived': { bg: 'rgba(99,102,241,0.1)',  color: '#818cf8', border: 'rgba(99,102,241,0.3)' },
+      'Cancelled':         { bg: 'rgba(220,53,69,0.1)',   color: '#dc3545', border: 'rgba(220,53,69,0.3)' },
     };
-    return map[status] || map['DRAFT'];
+    return map[status] || map['Draft'];
   };
 
   const filtered = filterStatus ? orders.filter(o => o.status === filterStatus) : orders;
 
   const stats = [
     { label: 'Total POs',  value: orders.length, icon: '📋' },
-    { label: 'Draft',      value: orders.filter(o => o.status === 'DRAFT').length, icon: '✏️' },
-    { label: 'Pending',    value: orders.filter(o => o.status === 'PENDING').length, icon: '⏳' },
-    { label: 'Approved',   value: orders.filter(o => o.status === 'APPROVED').length, icon: '✅' },
+    { label: 'Draft',      value: orders.filter(o => o.status === 'Draft').length, icon: '✏️' },
+    { label: 'Pending',    value: orders.filter(o => o.status === 'Pending').length, icon: '⏳' },
+    { label: 'Approved',   value: orders.filter(o => o.status === 'Approved').length, icon: '✅' },
   ];
 
   return (
@@ -107,14 +85,15 @@ function PurchasePage() {
       {/* Workflow */}
       <div style={{ backgroundColor: '#0f0f23', border: '1px solid #ffffff10', borderRadius: '10px', padding: '16px', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
         <span style={{ color: '#666', fontSize: '11px', fontFamily: 'monospace' }}>WORKFLOW:</span>
-        {['DRAFT', '→', 'PENDING', '→', 'APPROVED', '→', 'RECEIVED'].map((s, i) => (
+        {['Draft', '→', 'Approved', '→', 'FullyReceived'].map((s, i) => (
           <span key={i} style={{ color: s === '→' ? '#333' : '#e94560', fontFamily: 'monospace', fontSize: '12px', fontWeight: 600, backgroundColor: s === '→' ? 'transparent' : 'rgba(233,69,96,0.1)', padding: s === '→' ? '0' : '4px 10px', borderRadius: '4px' }}>{s}</span>
         ))}
+        <span style={{ color: '#666', fontSize: '11px', marginLeft: 'auto', fontFamily: 'monospace' }}>or → Cancelled</span>
       </div>
 
       {/* Filter */}
       <div style={{ display: 'flex', gap: '8px', marginBottom: '20px', flexWrap: 'wrap' }}>
-        {['', 'DRAFT', 'PENDING', 'APPROVED', 'RECEIVED', 'CANCELLED'].map(s => (
+        {['', 'Draft', 'Approved', 'FullyReceived', 'PartiallyReceived', 'Cancelled'].map(s => (
           <button key={s} onClick={() => setFilterStatus(s)} style={{ padding: '7px 16px', borderRadius: '6px', fontSize: '12px', cursor: 'pointer', fontFamily: 'monospace', backgroundColor: filterStatus === s ? '#e94560' : '#ffffff08', color: filterStatus === s ? 'white' : '#666', border: filterStatus === s ? 'none' : '1px solid #ffffff15' }}>
             {s || 'ALL'}
           </button>
@@ -134,6 +113,7 @@ function PurchasePage() {
                 <th style={styles.th}>Status</th>
                 <th style={styles.th}>Total Amount</th>
                 <th style={styles.th}>Order Date</th>
+                <th style={styles.th}>Expected Date</th>
                 <th style={styles.th}>Actions</th>
               </tr>
             </thead>
@@ -152,11 +132,15 @@ function PurchasePage() {
                     </td>
                     <td style={{ ...styles.td, color: '#4ade80', fontWeight: 600 }}>₹{o.totalAmount}</td>
                     <td style={styles.td}>{new Date(o.orderDate).toLocaleDateString()}</td>
+                    <td style={styles.td}>{o.expectedDate ? new Date(o.expectedDate).toLocaleDateString() : '—'}</td>
                     <td style={styles.td}>
                       <div style={{ display: 'flex', gap: '6px' }}>
-                        {o.status === 'DRAFT' && <button onClick={() => handleSubmit(o.id)} style={styles.btnSubmit}>Submit</button>}
-                        {o.status === 'PENDING' && (role === 'ADMIN' || role === 'MANAGER') && <button onClick={() => handleApprove(o.id)} style={styles.btnApprove}>Approve</button>}
-                        {(o.status === 'DRAFT' || o.status === 'PENDING') && <button onClick={() => handleCancel(o.id)} style={styles.btnCancel}>Cancel</button>}
+                        {o.status === 'Draft' && (role === 'ADMIN' || role === 'MANAGER') && (
+                          <button onClick={() => handleApprove(o.id)} style={styles.btnApprove}>Approve</button>
+                        )}
+                        {(o.status === 'Draft') && (
+                          <button onClick={() => handleCancel(o.id)} style={styles.btnCancel}>Cancel</button>
+                        )}
                       </div>
                     </td>
                   </tr>
@@ -178,7 +162,6 @@ const styles = {
   title: { color: 'white', fontSize: '32px', fontWeight: 800, margin: '0 0 6px 0' },
   subtitle: { color: '#666', fontSize: '14px', margin: 0 },
   btnPrimary: { padding: '10px 20px', backgroundColor: '#e94560', color: 'white', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: 600, cursor: 'pointer' },
-  btnSubmit: { padding: '4px 10px', backgroundColor: 'rgba(255,171,0,0.1)', color: '#ffab00', border: '1px solid rgba(255,171,0,0.3)', borderRadius: '4px', fontSize: '11px', cursor: 'pointer' },
   btnApprove: { padding: '4px 10px', backgroundColor: 'rgba(74,222,128,0.1)', color: '#4ade80', border: '1px solid rgba(74,222,128,0.3)', borderRadius: '4px', fontSize: '11px', cursor: 'pointer' },
   btnCancel: { padding: '4px 10px', backgroundColor: 'rgba(220,53,69,0.1)', color: '#dc3545', border: '1px solid rgba(220,53,69,0.3)', borderRadius: '4px', fontSize: '11px', cursor: 'pointer' },
   statsRow: { display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '24px' },
