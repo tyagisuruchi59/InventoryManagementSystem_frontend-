@@ -19,6 +19,9 @@ const navItems = [
 { path: '/uc5/add-supplier', label: 'Add Supplier', icon: '➕', desc: 'Register new vendor' },
 { path: '/uc6/movements',       label: 'Movements',       icon: '📊', desc: 'Stock audit trail' },
 { path: '/uc6/record-movement', label: 'Record Movement', icon: '➕', desc: 'Log new movement'  },
+
+{ path: '/uc7/alerts',     label: 'Alerts',      icon: '🔔', desc: 'View all alerts' },
+{ path: '/uc7/send-alert', label: 'Send Alert',  icon: '📢', desc: 'Send notification' },
 ];
 
 function Sidebar() {
