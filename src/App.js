@@ -20,6 +20,12 @@ import './index.css';
 import PurchasePage   from './pages/UC4_Purchase/PurchasePage';
 import CreatePOPage   from './pages/UC4_Purchase/CreatePOPage';
 
+import SuppliersPage   from './pages/UC5_Supplier/SuppliersPage';
+import AddSupplierPage from './pages/UC5_Supplier/AddSupplierPage';
+
+import MovementsPage      from './pages/UC6_Movement/MovementsPage';
+import RecordMovementPage from './pages/UC6_Movement/RecordMovementPage';
+
 const PrivateRoute = ({ children }) => {
   const token = localStorage.getItem('stockpro_token');
   return token ? children : <Navigate to="/login" replace />;
@@ -57,6 +63,12 @@ function App() {
 
       <Route path="/uc4/purchase"   element={<PrivateRoute><Layout><PurchasePage /></Layout></PrivateRoute>} />
 <Route path="/uc4/create-po"  element={<PrivateRoute><Layout><CreatePOPage /></Layout></PrivateRoute>} />
+<Route path="/uc5/suppliers"    element={<PrivateRoute><Layout><SuppliersPage /></Layout></PrivateRoute>} />
+<Route path="/uc5/add-supplier" element={<PrivateRoute><Layout><AddSupplierPage /></Layout></PrivateRoute>} />
+
+<Route path="/uc6/movements"       element={<PrivateRoute><Layout><MovementsPage /></Layout></PrivateRoute>} />
+<Route path="/uc6/record-movement" element={<PrivateRoute><Layout><RecordMovementPage /></Layout></PrivateRoute>} />
+
 
         {/* Default */}
         <Route path="/" element={<Navigate to="/login" replace />} />
