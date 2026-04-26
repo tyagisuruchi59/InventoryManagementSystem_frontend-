@@ -27,7 +27,7 @@ import MovementsPage      from './pages/UC6_Movement/MovementsPage';
 import RecordMovementPage from './pages/UC6_Movement/RecordMovementPage';
 import AlertsPage    from './pages/UC7_Alert/AlertsPage';
 import SendAlertPage from './pages/UC7_Alert/SendAlertPage';
-
+import ReportsPage from './pages/UC8_Report/ReportsPage';
 const PrivateRoute = ({ children }) => {
   const token = localStorage.getItem('stockpro_token');
   return token ? children : <Navigate to="/login" replace />;
@@ -72,6 +72,7 @@ function App() {
 <Route path="/uc6/record-movement" element={<PrivateRoute><Layout><RecordMovementPage /></Layout></PrivateRoute>} />
 <Route path="/uc7/alerts"      element={<PrivateRoute><Layout><AlertsPage /></Layout></PrivateRoute>} />
 <Route path="/uc7/send-alert"  element={<PrivateRoute><Layout><SendAlertPage /></Layout></PrivateRoute>} />
+<Route path="/uc8/reports" element={<PrivateRoute><Layout><ReportsPage /></Layout></PrivateRoute>} />
 
 
         {/* Default */}
