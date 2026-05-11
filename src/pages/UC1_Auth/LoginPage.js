@@ -1,10 +1,10 @@
-// StockPro Inventory Management System
+﻿// StockPro Inventory Management System
 // UC1 - Auth Service | Page: Login
 // Developer: Suru | April 2026
 // Description: Login → POST /api/auth/login → saves token, username, role
 
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { authAPI } from '../../api';
 
 function LoginPage() {
@@ -251,11 +251,11 @@ function LoginPage() {
                 marginBottom: '8px', fontFamily: 'monospace'
               }}>USERNAME</label>
               <input
-              name="username" type="text"
-              autoComplete="off"
-              placeholder="Enter your username"
-              value={form.username} onChange={handleChange}
-             required
+                name="username" type="text"
+                autoComplete="off"
+                placeholder="Enter your username"
+                value={form.username} onChange={handleChange}
+                required
                 style={{
                   width: '100%', padding: '14px 16px',
                   backgroundColor: '#ffffff08',
@@ -358,10 +358,10 @@ function LoginPage() {
             textAlign: 'center', marginTop: '24px'
           }}>
             New user?{' '}
-            <a href="/register" style={{
+            <Link to="/register" style={{
               color: '#e94560',
               textDecoration: 'none', fontWeight: 600
-            }}>Register here</a>
+            }}>Register here</Link>
           </p>
         </div>
       </div>

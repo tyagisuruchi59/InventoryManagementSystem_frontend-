@@ -17,6 +17,7 @@ function RegisterPage({ embedded }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+  
     setError(''); setMessage('');
     setLoading(true);
     try {
