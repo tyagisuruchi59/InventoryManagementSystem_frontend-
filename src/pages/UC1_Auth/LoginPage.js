@@ -51,7 +51,6 @@ function LoginPage() {
     { icon: '🔐', text: 'Role-based access control (RBAC)' },
     { icon: '📋', text: 'Purchase order lifecycle tracking' },
     { icon: '📊', text: 'Inventory analytics & reporting' },
-    { icon: '🔍', text: 'QR code barcode scanning' },
   ];
 
   return (
@@ -252,10 +251,11 @@ function LoginPage() {
                 marginBottom: '8px', fontFamily: 'monospace'
               }}>USERNAME</label>
               <input
-                name="username" type="text"
-                placeholder="Enter your username"
-                value={form.username} onChange={handleChange}
-                required
+              name="username" type="text"
+              autoComplete="off"
+              placeholder="Enter your username"
+              value={form.username} onChange={handleChange}
+             required
                 style={{
                   width: '100%', padding: '14px 16px',
                   backgroundColor: '#ffffff08',

@@ -1,7 +1,7 @@
 // StockPro Inventory Management System
 // UC3 - Warehouse Service | Page: Stock Levels
 // Developer: Suru | April 2026
-// Description: GET /api/warehouse/{id}/stock → view stock per warehouse
+// Description: Shows ALL stock levels across all warehouses
 
 import React, { useState, useEffect } from 'react';
 import { warehouseAPI } from '../../api';
@@ -10,8 +10,8 @@ function StockPage() {
   const [warehouses, setWarehouses] = useState([]);
   const [selectedWarehouse, setSelectedWarehouse] = useState('');
   const [stock, setStock] = useState([]);
+  const [allStock, setAllStock] = useState([]);
   const [lowStock, setLowStock] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [showAddStock, setShowAddStock] = useState(false);
   const [stockForm, setStockForm] = useState({ warehouseId: '', productId: '', quantity: '', reservedQuantity: '0', reorderLevel: '', maxStockLevel: '' });
 
@@ -21,16 +21,34 @@ function StockPage() {
     try {
       const res = await warehouseAPI.get('/api/warehouse');
       setWarehouses(res.data);
+      // Auto load ALL warehouses stock
+      loadAllStock(res.data);
+    } catch (err) { console.log(err); }
+  };
+
+  const loadAllStock = async (warehouseList) => {
+    try {
+      const allResults = await Promise.all(
+        warehouseList.map(w => warehouseAPI.get(`/api/warehouse/${w.id}/stock`))
+      );
+      const combined = allResults.flatMap((res, i) =>
+        res.data.map(s => ({ ...s, warehouseName: warehouseList[i].name, warehouseId: warehouseList[i].id }))
+      );
+      setAllStock(combined);
+      setStock(combined);
     } catch (err) { console.log(err); }
   };
 
   const loadStock = async (warehouseId) => {
-    setLoading(true);
+    if (!warehouseId) {
+      setStock(allStock);
+      return;
+    }
     try {
       const res = await warehouseAPI.get(`/api/warehouse/${warehouseId}/stock`);
-      setStock(res.data);
+      const wh = warehouses.find(w => w.id === parseInt(warehouseId));
+      setStock(res.data.map(s => ({ ...s, warehouseName: wh?.name, warehouseId: parseInt(warehouseId) })));
     } catch (err) { console.log(err); }
-    setLoading(false);
   };
 
   const loadLowStock = async () => {
@@ -42,7 +60,7 @@ function StockPage() {
 
   const handleWarehouseChange = (e) => {
     setSelectedWarehouse(e.target.value);
-    if (e.target.value) loadStock(e.target.value);
+    loadStock(e.target.value);
   };
 
   const handleAddStock = async (e) => {
@@ -58,7 +76,7 @@ function StockPage() {
       });
       alert('Stock updated!');
       setShowAddStock(false);
-      if (selectedWarehouse) loadStock(selectedWarehouse);
+      loadWarehouses();
     } catch { alert('Error updating stock'); }
   };
 
@@ -68,7 +86,7 @@ function StockPage() {
         <div>
           <div style={styles.ucBadge}>UC3 · STOCK LEVELS</div>
           <h1 style={styles.title}>Stock Level Management</h1>
-          <p style={styles.subtitle}>View and manage stock per warehouse</p>
+          <p style={styles.subtitle}>View and manage stock across all warehouses</p>
         </div>
         <button onClick={() => setShowAddStock(!showAddStock)} style={styles.btnPrimary}>
           {showAddStock ? '✕ Cancel' : '+ Add Stock'}
@@ -117,59 +135,64 @@ function StockPage() {
         </div>
       )}
 
-      {/* Warehouse selector */}
+      {/* Filter dropdown */}
       <div style={{ marginBottom: '24px' }}>
-        <label style={{ ...styles.label, display: 'block', marginBottom: '8px' }}>SELECT WAREHOUSE TO VIEW STOCK</label>
+        <label style={{ ...styles.label, display: 'block', marginBottom: '8px' }}>FILTER BY WAREHOUSE</label>
         <select value={selectedWarehouse} onChange={handleWarehouseChange}
-          style={{ ...styles.input, maxWidth: '400px', cursor: 'pointer' }}>
-          <option value="">-- Select a warehouse --</option>
+          style={{ ...styles.input, maxWidth: '400px', cursor: 'pointer', backgroundColor: '#0f0f23', color: 'white' }}>
+          <option value="" style={{ backgroundColor: '#0f0f23', color: 'white' }}>-- All Warehouses --</option>
           {warehouses.map(w => (
-            <option key={w.id} value={w.id}>{w.name} — {w.city}</option>
+            <option key={w.id} value={w.id} style={{ backgroundColor: '#0f0f23', color: 'white' }}>[ID:{w.id}] {w.name}</option>
           ))}
         </select>
       </div>
 
-      {/* Stock table */}
-      {selectedWarehouse && (
-        <div style={styles.tableWrapper}>
-          <table style={styles.table}>
-            <thead>
-              <tr style={styles.tableHead}>
-                <th style={styles.th}>Product ID</th>
-                <th style={styles.th}>Total Qty</th>
-                <th style={styles.th}>Reserved</th>
-                <th style={styles.th}>Available</th>
-                <th style={styles.th}>Reorder Level</th>
-                <th style={styles.th}>Max Level</th>
-                <th style={styles.th}>Status</th>
+      {/* Stock table — shows ALL by default */}
+      <div style={styles.tableWrapper}>
+        <table style={styles.table}>
+          <thead>
+            <tr style={styles.tableHead}>
+              <th style={styles.th}>Warehouse</th>
+              <th style={styles.th}>Product ID</th>
+              <th style={styles.th}>Total Qty</th>
+              <th style={styles.th}>Reserved</th>
+              <th style={styles.th}>Available</th>
+              <th style={styles.th}>Reorder Level</th>
+              <th style={styles.th}>Max Level</th>
+              <th style={styles.th}>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {stock.map((s, i) => (
+              <tr key={s.id} style={{ backgroundColor: i % 2 === 0 ? '#0f0f23' : '#0d0d1a' }}>
+                <td style={styles.td}><span style={{ fontFamily: 'monospace', color: '#818cf8' }}>{s.warehouseName || `WH#${s.warehouseId}`}</span></td>
+                <td style={styles.td}><span style={{ fontFamily: 'monospace', color: '#e94560' }}>#{s.productId}</span></td>
+                <td style={styles.td}>{s.quantity}</td>
+                <td style={styles.td}>{s.reservedQuantity}</td>
+                <td style={{ ...styles.td, color: '#4ade80', fontWeight: 600 }}>{s.availableQuantity}</td>
+                <td style={styles.td}>{s.reorderLevel}</td>
+                <td style={styles.td}>{s.maxStockLevel}</td>
+                <td style={styles.td}>
+                  <span style={{
+                    padding: '3px 10px', borderRadius: '20px', fontSize: '11px',
+                    backgroundColor: s.quantity < s.reorderLevel ? 'rgba(255,171,0,0.1)' : 'rgba(74,222,128,0.1)',
+                    color: s.quantity < s.reorderLevel ? '#ffab00' : '#4ade80',
+                    border: `1px solid ${s.quantity < s.reorderLevel ? 'rgba(255,171,0,0.3)' : 'rgba(74,222,128,0.3)'}`
+                  }}>
+                    {s.quantity < s.reorderLevel ? '⚠️ Low Stock' : '✅ OK'}
+                  </span>
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {stock.map((s, i) => (
-                <tr key={s.id} style={{ backgroundColor: i % 2 === 0 ? '#0f0f23' : '#0d0d1a' }}>
-                  <td style={styles.td}><span style={{ fontFamily: 'monospace', color: '#e94560' }}>#{s.productId}</span></td>
-                  <td style={styles.td}>{s.quantity}</td>
-                  <td style={styles.td}>{s.reservedQuantity}</td>
-                  <td style={{ ...styles.td, color: '#4ade80', fontWeight: 600 }}>{s.availableQuantity}</td>
-                  <td style={styles.td}>{s.reorderLevel}</td>
-                  <td style={styles.td}>{s.maxStockLevel}</td>
-                  <td style={styles.td}>
-                    <span style={{
-                      padding: '3px 10px', borderRadius: '20px', fontSize: '11px',
-                      backgroundColor: s.quantity < s.reorderLevel ? 'rgba(255,171,0,0.1)' : 'rgba(74,222,128,0.1)',
-                      color: s.quantity < s.reorderLevel ? '#ffab00' : '#4ade80',
-                      border: `1px solid ${s.quantity < s.reorderLevel ? 'rgba(255,171,0,0.3)' : 'rgba(74,222,128,0.3)'}`
-                    }}>
-                      {s.quantity < s.reorderLevel ? '⚠️ Low Stock' : '✅ OK'}
-                    </span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          {stock.length === 0 && <div style={styles.empty}><div style={{ fontSize: '40px' }}>📦</div>No stock records for this warehouse</div>}
-        </div>
-      )}
+            ))}
+          </tbody>
+        </table>
+        {stock.length === 0 && (
+          <div style={styles.empty}>
+            <div style={{ fontSize: '40px' }}>📦</div>
+            No stock records found. Add stock using the + Add Stock button.
+          </div>
+        )}
+      </div>
     </div>
   );
 }

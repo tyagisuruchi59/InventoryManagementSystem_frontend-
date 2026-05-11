@@ -77,7 +77,7 @@ function WarehousesPage() {
       {/* Add form */}
       {showForm && (
         <div style={styles.formCard}>
-          <h3 style={{ color: 'white', marginBottom: '20px', fontFamily: 'var(--font-display)' }}>New Warehouse</h3>
+          <h3 style={{ color: 'white', marginBottom: '20px', fontFamily: 'monospace' }}>New Warehouse</h3>
           <form onSubmit={handleCreate}>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '14px', marginBottom: '16px' }}>
               {[
@@ -135,7 +135,15 @@ function WarehousesPage() {
                   border: `1px solid ${w.isActive ? 'rgba(74,222,128,0.3)' : '#333'}`
                 }}>{w.isActive ? 'Active' : 'Inactive'}</span>
               </div>
-              <h3 style={{ color: 'white', fontSize: '16px', fontWeight: 700, marginBottom: '12px' }}>{w.name}</h3>
+
+              {/* Name + ID badge */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                <h3 style={{ color: 'white', fontSize: '16px', fontWeight: 700, margin: 0 }}>{w.name}</h3>
+                <span style={{ fontFamily: 'monospace', fontSize: '12px', color: '#e94560', backgroundColor: 'rgba(233,69,96,0.1)', border: '1px solid rgba(233,69,96,0.3)', padding: '3px 8px', borderRadius: '4px' }}>
+                  ID: {w.id}
+                </span>
+              </div>
+
               <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '16px' }}>
                 <div style={styles.detail}>📍 {w.city}</div>
                 <div style={styles.detail}>🏠 {w.address}</div>

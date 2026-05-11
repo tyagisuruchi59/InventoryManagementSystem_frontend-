@@ -33,7 +33,7 @@ function PurchasePage() {
   const handleSubmit = async (id) => {
     if (!window.confirm('Submit this PO for approval?')) return;
     try {
-      await purchaseAPI.put(`/api/purchase-orders/${id}/submit`);
+      await purchaseAPI.put(`/api/purchase-orders/${id}/status`, { status: 'Pending' });
       loadOrders();
     } catch {
       try { await purchaseAPI.put(`/api/purchase/${id}/submit`); loadOrders(); }
