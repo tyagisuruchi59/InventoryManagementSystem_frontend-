@@ -24,33 +24,33 @@ const createAPI = (baseURL) => {
 };
 
 export const authAPI = createAPI(
-  process.env.REACT_APP_AUTH_URL || 'http://localhost:5000'
+  process.env.REACT_APP_AUTH_URL 
 );
 
 export const productAPI = createAPI(
-  process.env.REACT_APP_PRODUCT_URL || 'http://localhost:5001'
+  process.env.REACT_APP_PRODUCT_URL 
 );
 
 export const warehouseAPI = createAPI(
-  process.env.REACT_APP_WAREHOUSE_URL || 'http://localhost:5002'
+  process.env.REACT_APP_WAREHOUSE_URL
 );
 
 export const purchaseAPI = createAPI(
-  process.env.REACT_APP_PURCHASE_URL || 'http://localhost:5004'
+  process.env.REACT_APP_PURCHASE_URL
 );
 
 export const supplierAPI = createAPI(
-  process.env.REACT_APP_SUPPLIER_URL || 'http://localhost:5005'
+  process.env.REACT_APP_SUPPLIER_URL 
 );
 
 export const movementAPI = createAPI(
-  process.env.REACT_APP_MOVEMENT_URL || 'http://localhost:5006'
+  process.env.REACT_APP_MOVEMENT_URL 
 );
 
 export const alertAPI = createAPI(
-  process.env.REACT_APP_ALERT_URL || 'http://localhost:5007'
+  process.env.REACT_APP_ALERT_URL
 );
 
 export const reportAPI = createAPI(
-  process.env.REACT_APP_REPORT_URL || 'http://localhost:5008'
+  process.env.REACT_APP_REPORT_URL 
 );
