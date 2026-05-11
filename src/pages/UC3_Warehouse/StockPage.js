@@ -3,7 +3,7 @@
 // Developer: Suru | April 2026
 // Description: Shows ALL stock levels across all warehouses
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { warehouseAPI } from '../../api';
 
 function StockPage() {
@@ -15,18 +15,7 @@ function StockPage() {
   const [showAddStock, setShowAddStock] = useState(false);
   const [stockForm, setStockForm] = useState({ warehouseId: '', productId: '', quantity: '', reservedQuantity: '0', reorderLevel: '', maxStockLevel: '' });
 
-  useEffect(() => { loadWarehouses(); loadLowStock(); }, []);
-
-  const loadWarehouses = async () => {
-    try {
-      const res = await warehouseAPI.get('/api/warehouse');
-      setWarehouses(res.data);
-      // Auto load ALL warehouses stock
-      loadAllStock(res.data);
-    } catch (err) { console.log(err); }
-  };
-
-  const loadAllStock = async (warehouseList) => {
+  const loadAllStock = useCallback(async (warehouseList) => {
     try {
       const allResults = await Promise.all(
         warehouseList.map(w => warehouseAPI.get(`/api/warehouse/${w.id}/stock`))
@@ -37,7 +26,28 @@ function StockPage() {
       setAllStock(combined);
       setStock(combined);
     } catch (err) { console.log(err); }
-  };
+  }, []);
+
+  const loadWarehouses = useCallback(async () => {
+    try {
+      const res = await warehouseAPI.get('/api/warehouse');
+      setWarehouses(res.data);
+      // Auto load ALL warehouses stock
+      loadAllStock(res.data);
+    } catch (err) { console.log(err); }
+  }, [loadAllStock]);
+
+  const loadLowStock = useCallback(async () => {
+    try {
+      const res = await warehouseAPI.get('/api/warehouse/stock/lowstock');
+      setLowStock(res.data);
+    } catch (err) { console.log(err); }
+  }, []);
+
+  useEffect(() => {
+    loadWarehouses();
+    loadLowStock();
+  }, [loadWarehouses, loadLowStock]);
 
   const loadStock = async (warehouseId) => {
     if (!warehouseId) {
@@ -48,13 +58,6 @@ function StockPage() {
       const res = await warehouseAPI.get(`/api/warehouse/${warehouseId}/stock`);
       const wh = warehouses.find(w => w.id === parseInt(warehouseId));
       setStock(res.data.map(s => ({ ...s, warehouseName: wh?.name, warehouseId: parseInt(warehouseId) })));
-    } catch (err) { console.log(err); }
-  };
-
-  const loadLowStock = async () => {
-    try {
-      const res = await warehouseAPI.get('/api/warehouse/stock/lowstock');
-      setLowStock(res.data);
     } catch (err) { console.log(err); }
   };
 

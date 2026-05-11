@@ -13,15 +13,19 @@ function ProductDetailPage() {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => { loadProduct(); }, []);
+  useEffect(() => {
+    const loadProduct = async () => {
+      try {
+        const res = await productAPI.get(`/api/product/${id}`);
+        setProduct(res.data);
+      } catch (err) {
+        console.log(err);
+      }
+      setLoading(false);
+    };
 
-  const loadProduct = async () => {
-    try {
-      const res = await productAPI.get(`/api/product/${id}`);
-      setProduct(res.data);
-    } catch (err) { console.log(err); }
-    setLoading(false);
-  };
+    loadProduct();
+  }, [id]);
 
   if (loading) return <div style={{ backgroundColor: '#0d0d1a', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#666' }}>Loading...</div>;
   if (!product) return <div style={{ backgroundColor: '#0d0d1a', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#666' }}>Product not found</div>;

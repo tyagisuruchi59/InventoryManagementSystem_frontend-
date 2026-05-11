@@ -7,7 +7,6 @@ function DashboardPage() {
   const username = localStorage.getItem('stockpro_username') || 'Admin';
   const role = localStorage.getItem('stockpro_role') || 'ADMIN';
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [showNotifications, setShowNotifications] = useState(false);
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
@@ -50,12 +49,6 @@ function DashboardPage() {
     if (trend === 'down') return '#ef4444';
     return '#f59e0b';
   };
-
-  const notifications = [
-    { id: 1, title: 'Low Stock Alert', message: 'Wireless Mouse is running low (8 units left)', time: '5 min ago', read: false },
-    { id: 2, title: 'Purchase Order Approved', message: 'PO #PO-2402 has been approved', time: '1 hour ago', read: false },
-    { id: 3, title: 'New User Registered', message: 'Sarah Johnson joined as STAFF', time: '2 hours ago', read: true },
-  ];
 
   return (
     <div className="page-enter" style={{ paddingBottom: '40px' }}>

@@ -4,11 +4,10 @@
 // Description: Register → POST /api/auth/register
 
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { authAPI } from '../../api';
 
 function RegisterPage({ embedded }) {
-  const navigate = useNavigate();
   const [form, setForm]       = useState({ username: '', password: '', role: 'STAFF' });
   const [message, setMessage] = useState('');
   const [error, setError]     = useState('');
