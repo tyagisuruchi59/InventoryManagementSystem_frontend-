@@ -1,4 +1,4 @@
-﻿// StockPro Inventory Management System
+// StockPro Inventory Management System
 // UC1 - Auth Service | Page: Login
 // Developer: Suru | April 2026
 // Description: Login → POST /api/auth/login → saves token, username, role
